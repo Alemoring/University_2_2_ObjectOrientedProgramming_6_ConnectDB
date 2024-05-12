@@ -1,10 +1,12 @@
 package model;
 
+import data.ConnectionDB;
 import domain.entities.*;
 import view.MainForm;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Objects;
@@ -163,49 +165,90 @@ public class MyTableModel extends AbstractTableModel {
                 case 2: // Имя
                     try{
                         products.get(rowIndex).setName((String) aValue);
+                        ConnectionDB.Conn();
+                        ConnectionDB.UpdateInDB(products.get(rowIndex), columnIndex);
+                        ConnectionDB.CloseDB();
                     }catch (IndexOutOfBoundsException ex){
                         JOptionPane.showMessageDialog(null, "That wrong");
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    } catch (ClassNotFoundException e) {
+                        throw new RuntimeException(e);
                     }
                     break;
                 case 3: // Дата
                     try{
                         products.get(rowIndex).setPurchaseDate((String) aValue);
+                        ConnectionDB.Conn();
+                        ConnectionDB.UpdateInDB(products.get(rowIndex), columnIndex);
+                        ConnectionDB.CloseDB();
                     }catch (NumberFormatException ex){
                         JOptionPane.showMessageDialog(null, "Wrong format");
                     }catch (IndexOutOfBoundsException ex){
                         JOptionPane.showMessageDialog(null, "That wrong");
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    } catch (ClassNotFoundException e) {
+                        throw new RuntimeException(e);
                     }
                     break;
                 case 4: // Цена
                     try{
                         String price = (String) aValue;
                         products.get(rowIndex).setPrice(Double.parseDouble(price));
+                        ConnectionDB.Conn();
+                        ConnectionDB.UpdateInDB(products.get(rowIndex), columnIndex);
+                        ConnectionDB.CloseDB();
                     }catch (NumberFormatException ex){
                         JOptionPane.showMessageDialog(null, "Wrong format");
                     }catch (IndexOutOfBoundsException ex){
                         JOptionPane.showMessageDialog(null, "That wrong");
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    } catch (ClassNotFoundException e) {
+                        throw new RuntimeException(e);
                     }
                     break;
                 case 5: // адрес
                     try {
                         products.get(rowIndex).setAddress((String) aValue);
+                        ConnectionDB.Conn();
+                        ConnectionDB.UpdateInDB(products.get(rowIndex), columnIndex);
+                        ConnectionDB.CloseDB();
                     }catch (IndexOutOfBoundsException ex){
                         JOptionPane.showMessageDialog(null, "That wrong");
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    } catch (ClassNotFoundException e) {
+                        throw new RuntimeException(e);
                     }
                     break;
                 case 6: // Качество
                     try{
                         if ("Good".equals((String) aValue)){
                             products.get(rowIndex).setQuality(0);
+                            ConnectionDB.Conn();
+                            ConnectionDB.UpdateInDB(products.get(rowIndex), columnIndex);
+                            ConnectionDB.CloseDB();
                         }else if ("Normal".equals((String) aValue)){
                             products.get(rowIndex).setQuality(1);
+                            ConnectionDB.Conn();
+                            ConnectionDB.UpdateInDB(products.get(rowIndex), columnIndex);
+                            ConnectionDB.CloseDB();
                         }else if("Bad".equals((String) aValue)){
                             products.get(rowIndex).setQuality(2);
+                            ConnectionDB.Conn();
+                            ConnectionDB.UpdateInDB(products.get(rowIndex), columnIndex);
+                            ConnectionDB.CloseDB();
                         }else{
                             JOptionPane.showMessageDialog(null, "Wrong format \n Please entry 'Good' or 'Normal' or 'Bad'");
                         }
                     }catch (IndexOutOfBoundsException ex){
                         JOptionPane.showMessageDialog(null, "That wrong");
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    } catch (ClassNotFoundException e) {
+                        throw new RuntimeException(e);
                     }
                     break;
             }

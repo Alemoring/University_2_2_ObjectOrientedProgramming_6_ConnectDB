@@ -67,7 +67,7 @@ public class Food extends Product{
     @Override
     public void setPurchaseDate(String purchaseDate) {
         String[] values = purchaseDate.trim().split(" ");
-        this.purchaseDate.set(Integer.parseInt(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2]));
+        this.purchaseDate.set(Integer.parseInt(values[0]), (Integer.parseInt(values[1]) - 1), Integer.parseInt(values[2]));
     }
 
     @Override

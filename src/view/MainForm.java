@@ -1,20 +1,20 @@
 package view;
 
-import data.Txt;
+import data.ConnectionDB;
 import domain.entities.*;
 import model.MyTableModel;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Scanner;
+
+import static data.ConnectionDB.*;
 
 public class MainForm extends JFrame {
-    private File path = new File("C:\\Users\\Алемор\\Desktop\\Саша\\Обучение\\ООП\\LW_5\\OOP_LW_5");
+    //private File path = new File("C:\\Users\\Алемор\\Desktop\\Саша\\Обучение\\ООП\\LW_5\\OOP_LW_5");
     // C:\Users\stud\Desktop\Alemor\LW_5_encode
     // C:\Users\Алемор\Desktop\Саша\Обучение\ООП\LW_5\OOP_LW_5
     private JFrame frame;
@@ -27,12 +27,10 @@ public class MainForm extends JFrame {
     private JMenuItem aboutProgramItem;
     private JMenu fileMenu;
     private JMenuItem openItem;
-    private JMenuItem saveItem;
     private JTable table;
     private MyTableModel tableModel;
     private JPanel mainPanel;
     private JPanel eastPanel;
-    private JFileChooser fileChooser;
     private String[] types = {
             "Food",
             "Clothes",
@@ -130,43 +128,21 @@ public class MainForm extends JFrame {
         }
         return readed;
     }
-    public class saveFile implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            fileChooser.setDialogTitle("Save File");
-            // Определение режима - только файл
-            fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-            int result = fileChooser.showSaveDialog(MainForm.this);
-            // Если файл выбран, то представим его в сообщении
-            if (result == JFileChooser.APPROVE_OPTION ) {
-                JOptionPane.showMessageDialog(MainForm.this,
-                        "File '" + fileChooser.getSelectedFile() +
-                                " ) saved");
-                Txt.setFilename(fileChooser.getSelectedFile(), fileChooser.getCurrentDirectory().toString());
-                Txt.writeArrayToFile(tableModel.getData());
-            }
-        }
-    }
     public void loadTable(){
         tableModel.changeData(products);
     }
     public class openFile implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            fileChooser.setDialogTitle("Open the file");
-            // Определение режима - только файл
-            fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-            int result = fileChooser.showOpenDialog(MainForm.this);
-            // Если файл выбран, то представим его в сообщении
-            if (result == JFileChooser.APPROVE_OPTION ) {
-                JOptionPane.showMessageDialog(MainForm.this,
-                        "File '" + fileChooser.getSelectedFile() +
-                                " ) download");
-                Txt.setFilename(fileChooser.getSelectedFile(), fileChooser.getCurrentDirectory().toString());
-                if (Txt.nullFileOrNotNull()){
-                    products = Txt.readProductsFromFile();
-                    loadTable();
-                }
+            try {
+                ConnectionDB.Conn();
+                products = ConnectionDB.ReadDB();
+                loadTable();
+                ConnectionDB.CloseDB();
+            } catch (ClassNotFoundException ex) {
+                throw new RuntimeException(ex);
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
             }
         }
     }
@@ -214,10 +190,7 @@ public class MainForm extends JFrame {
             }
         });
 
-        fileMenu = new JMenu("File");
-
-        saveItem = new JMenuItem("Save");
-        saveItem.addActionListener(new saveFile());
+        fileMenu = new JMenu("DataBase");
 
         openItem = new JMenuItem("Open");
         openItem.addActionListener(new openFile());
@@ -277,12 +250,42 @@ public class MainForm extends JFrame {
                         int endDateMonth = readValue(2, "Enter the expiration date month") - 1;
                         int endDateDay = readValue(3, "Enter the expiration date day");
                         endDate.set(endDateYear, endDateMonth, endDateDay);
-                        products.add(new Food(name, purDate, price, address, realQuality, comment, endDate));
+                        Food food = new Food(name, purDate, price, address, realQuality, comment, endDate);
+                        try {
+                            ConnectionDB.Conn();
+                            InsertInDB(food);
+                            ConnectionDB.CloseDB();
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        } catch (ClassNotFoundException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        products.add(food);
                     }else {
-                        products.add(new Food(name, purDate, price, address, realQuality, comment));
+                        Food food = new Food(name, purDate, price, address, realQuality, comment);
+                        try {
+                            ConnectionDB.Conn();
+                            InsertInDB(food);
+                            ConnectionDB.CloseDB();
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        } catch (ClassNotFoundException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        products.add(food);
                     }
                 }else if (type.equals((String) "Clothes")){
-                    products.add(new Clothes(name, purDate, price, address, realQuality, comment));
+                    Clothes clothes = new Clothes(name, purDate, price, address, realQuality, comment);
+                    try {
+                        ConnectionDB.Conn();
+                        InsertInDB(clothes);
+                        ConnectionDB.CloseDB();
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    } catch (ClassNotFoundException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    products.add(clothes);
                 }else if (type.equals((String) "Technic")){
                     int result = JOptionPane.showConfirmDialog(MainForm.this,
                             "Do you want to introduce a product guarantee?",
@@ -291,9 +294,29 @@ public class MainForm extends JFrame {
                             JOptionPane.WARNING_MESSAGE);
                     if (result == JOptionPane.YES_OPTION){
                         int guarantee = readValue(4, "Enter the number of months of guarantee");
-                        products.add(new Technic(name, purDate, price, address, realQuality, comment, guarantee));
+                        Technic technic = new Technic(name, purDate, price, address, realQuality, comment, guarantee);
+                        try {
+                            ConnectionDB.Conn();
+                            InsertInDB(technic);
+                            ConnectionDB.CloseDB();
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        } catch (ClassNotFoundException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        products.add(technic);
                     }else {
-                        products.add(new Technic(name, purDate, price, address, realQuality, comment));
+                        Technic technic = new Technic(name, purDate, price, address, realQuality, comment);
+                        try {
+                            ConnectionDB.Conn();
+                            InsertInDB(technic);
+                            ConnectionDB.CloseDB();
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        } catch (ClassNotFoundException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        products.add(technic);
                     }
                 }else {
                     double fatContent = readDoubleValue("Enter milk fat content");
@@ -308,9 +331,29 @@ public class MainForm extends JFrame {
                         int endDateMonth = readValue(2, "Enter the expiration date month") - 1;
                         int endDateDay = readValue(3, "Enter the expiration date day");
                         endDate.set(endDateYear, endDateMonth, endDateDay);
-                        products.add(new Milk(name, purDate, price, address, realQuality, comment, endDate, fatContent));
+                        Milk milk = new Milk(name, purDate, price, address, realQuality, comment, endDate, fatContent);
+                        try {
+                            ConnectionDB.Conn();
+                            InsertInDB(milk);
+                            ConnectionDB.CloseDB();
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        } catch (ClassNotFoundException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        products.add(milk);
                     }else {
-                        products.add(new Milk(name, purDate, price, address, realQuality, comment, fatContent));
+                        Milk milk = new Milk(name, purDate, price, address, realQuality, comment, fatContent);
+                        try {
+                            ConnectionDB.Conn();
+                            InsertInDB(milk);
+                            ConnectionDB.CloseDB();
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        } catch (ClassNotFoundException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        products.add(milk);
                     }
                 }
                 loadTable();
@@ -322,16 +365,21 @@ public class MainForm extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try{
+                    ConnectionDB.Conn();
+                    ConnectionDB.DeleteFromDB(products.get(table.getSelectedRow()));
+                    ConnectionDB.CloseDB();
                     tableModel.deleteRow(table.getSelectedRow());
                 }catch (IndexOutOfBoundsException ex){
                     JOptionPane.showMessageDialog(MainForm.this, "Unselected line");
                 }catch (IllegalArgumentException ex){
                     JOptionPane.showMessageDialog(MainForm.this, "Too many rows selected");
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                } catch (ClassNotFoundException ex) {
+                    throw new RuntimeException(ex);
                 }
             }
         });
-
-        fileChooser = new JFileChooser(path);
     }
 
     public void showErrorWrongFormat(){
@@ -340,7 +388,6 @@ public class MainForm extends JFrame {
     public void start(){
         aboutMenu.add(aboutProgramItem);
         helpMenu.add(helpItem);
-        fileMenu.add(saveItem);
         fileMenu.add(openItem);
 
         menuBar.add(fileMenu);

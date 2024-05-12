@@ -3,7 +3,7 @@ package domain.entities;
 import java.util.Calendar;
 
 public abstract class Product {
-    protected short id;
+    protected short id = 2;
     protected String name;
     protected Calendar purchaseDate;
     protected double price;
