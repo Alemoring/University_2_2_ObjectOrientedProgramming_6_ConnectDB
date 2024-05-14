@@ -14,9 +14,6 @@ import java.util.Calendar;
 import static data.ConnectionDB.*;
 
 public class MainForm extends JFrame {
-    //private File path = new File("C:\\Users\\Алемор\\Desktop\\Саша\\Обучение\\ООП\\LW_5\\OOP_LW_5");
-    // C:\Users\stud\Desktop\Alemor\LW_5_encode
-    // C:\Users\Алемор\Desktop\Саша\Обучение\ООП\LW_5\OOP_LW_5
     private JFrame frame;
     private JButton btnAddRow;
     private JButton btnDeleteRow;
@@ -380,10 +377,6 @@ public class MainForm extends JFrame {
                 }
             }
         });
-    }
-
-    public void showErrorWrongFormat(){
-        JOptionPane.showMessageDialog(MainForm.this,"Wrong format");;
     }
     public void start(){
         aboutMenu.add(aboutProgramItem);

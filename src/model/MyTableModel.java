@@ -2,7 +2,6 @@ package model;
 
 import data.ConnectionDB;
 import domain.entities.*;
-import view.MainForm;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -270,18 +269,9 @@ public class MyTableModel extends AbstractTableModel {
         this.fireTableDataChanged();
     }
 
-    public void addRow() {
-        sizeRow += 1;
-        this.getRowCount();
-        this.fireTableDataChanged();
-    }
-
     public void deleteRow(int selectedRow) {
         this.products.remove(selectedRow);
         sizeRow -= 1;
         this.fireTableDataChanged();
-    }
-    public ArrayList<Product> getData(){
-        return products;
     }
 }
