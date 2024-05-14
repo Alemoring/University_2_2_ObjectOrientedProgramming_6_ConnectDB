@@ -377,7 +377,7 @@ public class MainForm extends JFrame {
                 }
             }
         });
-    }
+    }//
     public void start(){
         aboutMenu.add(aboutProgramItem);
         helpMenu.add(helpItem);
